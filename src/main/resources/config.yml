@@ -1,0 +1,20 @@
+# BARDING is Spigot's internal name for horse armour.
+# Valid horse armour names:
+# - IRON_BARDING
+# - GOLD_BARDING
+# - DIAMOND_BARDING
+#
+# List of materials: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+#
+# Vanilla horse values:
+# Speed anywhere between 0.1125 and 0.3375
+# Jump Range anywhere between 0.4 and 1.0
+#
+# Values can be higher than this in this config if you want
+
+hellhorse:
+  Type: ZOMBIE_HORSE
+  Item: IRON_BARDING
+  Item Name: 'Hellhorse Mount'
+  Speed: 0.225
+  Jump Range: 0.7

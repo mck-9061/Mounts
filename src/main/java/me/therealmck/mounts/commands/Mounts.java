@@ -24,7 +24,6 @@ public class Mounts implements CommandExecutor {
                 ItemStack item = new ItemStack(Material.valueOf(section.getString("Item")));
                 ItemMeta meta = item.getItemMeta();
                 meta.setDisplayName(section.getString("Item Name"));
-                meta.setLore(Collections.singletonList("Mount: " + section.getCurrentPath()));
                 item.setItemMeta(meta);
 
                 toGive.getInventory().addItem(item);

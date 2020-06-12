@@ -9,7 +9,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.AbstractHorseInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -23,30 +22,40 @@ public class InteractListener implements Listener {
 
         if (event.getPlayer().isInsideVehicle()) return;
 
+
         ItemMeta meta = item.getItemMeta();
-        if (meta.hasLore()) {
-            String compare = meta.getLore().get(0);
-            if (compare.startsWith("Mount: ")) {
-                String mount = compare.replace("Mount: ", "");
-                ConfigurationSection section = Main.getMountsConfig().getConfigurationSection(mount);
+        if (meta.hasDisplayName()) {
+            String compare = meta.getDisplayName();
+            for (String key : Main.getMountsConfig().getKeys(false)) {
+                if (Main.getMountsConfig().getString(key+".Item Name").equals(compare)) {
+                    ConfigurationSection section = Main.getMountsConfig().getConfigurationSection(key);
 
-                if (section == null) return;
+                    if (section == null) continue;
 
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        AbstractHorse horse = (AbstractHorse) event.getPlayer().getLocation().getWorld().spawnEntity(event.getPlayer().getLocation(), EntityType.valueOf(section.getString("Type")));
-                        horse.setJumpStrength(section.getDouble("Jump Range"));
-                        horse.setOwner(event.getPlayer());
-                        horse.setTamed(true);
-                        horse.setAdult();
-                        ((AbstractHorseInventory) horse.getInventory()).setSaddle(new ItemStack(Material.SADDLE));
-                        horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(section.getDouble("Speed"));
-                        horse.addPassenger(event.getPlayer());
-                        Main.currentHorses.add(horse);
+                    if (!item.getType().equals(Material.valueOf(section.getString("Item")))) continue;
+
+                    if (Main.cooldown.contains(event.getPlayer())) {
+                        event.getPlayer().sendMessage(Main.getMessagesConfig().getString("cooldown"));
+                        return;
                     }
-                }.runTask(Main.instance);
-            } else return;
+
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            AbstractHorse horse = (AbstractHorse) event.getPlayer().getLocation().getWorld().spawnEntity(event.getPlayer().getLocation(), EntityType.valueOf(section.getString("Type")));
+                            horse.setJumpStrength(section.getDouble("Jump Range"));
+                            horse.setOwner(event.getPlayer());
+                            horse.setTamed(true);
+                            horse.setAdult();
+                            horse.setInvulnerable(true);
+                            horse.getInventory().addItem(new ItemStack(Material.SADDLE));
+                            horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(section.getDouble("Speed"));
+                            horse.addPassenger(event.getPlayer());
+                            Main.currentHorses.add(horse);
+                        }
+                    }.runTask(Main.instance);
+                } else continue;
+            }
         } else return;
     }
 }

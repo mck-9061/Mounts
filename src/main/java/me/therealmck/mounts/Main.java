@@ -1,9 +1,7 @@
 package me.therealmck.mounts;
 
-import me.therealmck.mounts.listeners.DeathListener;
+import me.therealmck.mounts.listeners.*;
 import me.therealmck.mounts.commands.Mounts;
-import me.therealmck.mounts.listeners.DismountListener;
-import me.therealmck.mounts.listeners.InteractListener;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -36,6 +34,8 @@ public class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new InteractListener(), this);
         getServer().getPluginManager().registerEvents(new DismountListener(), this);
         getServer().getPluginManager().registerEvents(new DeathListener(), this);
+        getServer().getPluginManager().registerEvents(new DisconnectListener(), this);
+        getServer().getPluginManager().registerEvents(new MoveListener(), this);
 
         this.getCommand("mounts").setExecutor(new Mounts());
     }
